@@ -10,17 +10,19 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://127.0.0.1:3000',
+    origin: '*',
     methods: ['GET', 'POST'],
   },
 });
 
 io.on('connection', (socket) => {
+  const { id } = socket;
   socket.on('send-message', (payload) => {
-    console.log(payload);
+    console.log(`User ${id} send message:  ${payload.message}`);
+    socket.broadcast.emit('receive-message', {
+      forwardMessage: payload.message,
+    });
   });
-
-  socket.broadcast.emit('re');
 });
 
 server.listen(3001, () => {
